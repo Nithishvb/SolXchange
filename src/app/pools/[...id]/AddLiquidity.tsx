@@ -2,7 +2,6 @@
 
 import {
   ArrowLeft,
-  ChevronDown,
   Settings,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -28,7 +27,7 @@ export default function AddLiquidity() {
       </div>
 
       <div className="p-6 space-y-6">
-        <div className="space-y-3">
+        {/* <div className="space-y-3">
           <h2 className="text-lg font-medium">Select pair</h2>
           <div className="flex gap-4">
             <Button
@@ -68,17 +67,17 @@ export default function AddLiquidity() {
               <ChevronDown className="h-5 w-5 text-muted-foreground" />
             </Button>
           </div>
-        </div>
+        </div> */}
 
         {/* Fee Tier */}
-        <div className="space-y-3">
+        <div className="p-2 bg-muted/50 rounded-md">
           <div className="flex items-center justify-between">
             <h2 className="text-lg font-medium">0.30% fee tier</h2>
             <Button variant="link" className="text-primary">
               Edit
             </Button>
           </div>
-          <div className="bg-muted/50 rounded-lg p-3">
+          <div className="rounded-lg">
             <span className="text-sm text-muted-foreground">100% select</span>
           </div>
         </div>
