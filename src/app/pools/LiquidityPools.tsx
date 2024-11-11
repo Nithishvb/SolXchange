@@ -4,68 +4,64 @@ import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
-  TableCell,
   TableHead,
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { ChevronDown, Search, TrendingUp } from "lucide-react";
-import { useRouter } from "next/navigation";
-import Image from "next/image";
+import { ChevronDown, Search } from "lucide-react";
+import { PoolTable } from "./PoolTable";
+interface Pools {
+  id: string;
+  tokenALogo: string;
+  tokenBLogo: string;
+  tokenASymbool: string;
+  tokenBSymbool: string;
+  feeRate: number;
+  apr: number;
+  tvl: number;
+  volume: number;
+}
 
 export default function LiquidityPool() {
-//   const pools = [
-//     {
-//       token1: "USDT",
-//       token2: "WBNB",
-//     //   chain: "BNB SMART CHAIN",
-//       version: "V3",
-//       fee: "0.01%",
-//       apr: 90.44,
-//       prevApr: 83.24,
-//       tvl: 6327026.7,
-//       volume: 131000000,
-//       type: "v3",
-//     },
-//     {
-//       token1: "USDT",
-//       token2: "WBNB",
-//     //   chain: "BNB SMART CHAIN",
-//       version: "V3",
-//       fee: "0.05%",
-//       apr: 12.49,
-//       prevApr: 11.37,
-//       tvl: 50001970,
-//       volume: 28056110,
-//       type: "v3",
-//     },
-//     // Add more pool data as needed
-//   ];
-
-  const [pools, setPools] = useState([]);
+  const [pools, setPools] = useState<Pools[]>([]);
+  const [searcVal, setSearchVal] = useState<string>("");
 
   const poolsData = async () => {
-    const data = await fetch("");
+    const data = await fetch(
+      ""
+    );
     const res = await data.json();
-    console.log(res.data.data);
-    setPools([...res.data.data]);
-  }
+    const poolsData: Pools[] = res.data.data.map((e: any) => {
+      return {
+        id: e.id,
+        tokenALogo: e.mintA.logoURI,
+        tokenBLogo: e.mintB.logoURI,
+        tokenASymbool: e.mintA.symbol,
+        tokenBSymbool: e.mintB.symbol,
+        feeRate: e.feeRate,
+        apr: e.day.apr,
+        tvl: e.tvl,
+        volume: e.day.volume,
+      };
+    });
+    setPools(poolsData);
+  };
 
   useEffect(() => {
     poolsData();
   }, []);
 
-  const router = useRouter();
-
   return (
     <div className="flex justify-center w-full">
-      <div className="w-[80%] p-4 space-y-4 bg-gradient-to-b from-purple-50 rounded-lg to-white dark:from-purple-950 dark:to-gray-950">
+      <div className="w-[80%] p-4 space-y-4 rounded-lg to-white dark:from-purple-950 dark:to-gray-950">
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           <div className="flex gap-2">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-500 h-4 w-4" />
               <input
                 type="text"
+                value={searcVal}
+                onChange={(e) => setSearchVal(e.target.value)}
                 placeholder="All tokens"
                 className="pl-10 pr-4 py-2 rounded-lg border bg-white dark:bg-gray-900 w-[400px]"
               />
@@ -94,48 +90,30 @@ export default function LiquidityPool() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {pools.map((pool, i) => (
-              <TableRow key={i} className="cursor-pointer h-[60px]">
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <div className="relative">
-                      <div className="w-8 h-8 rounded-full bg-teal-500">
-                        <Image src={pool.mintA.logoURI} height={100} width={100} alt="imgae" />
-                      </div>
-                      <div className="absolute -right-1 -bottom-1 w-4 h-4 rounded-full bg-purple-500">
-                        <Image src={pool.mintB.logoURI} height={100} width={100} alt="imgae" />
-                      </div>
-                    </div>
-                    <div>
-                      <div className="font-medium">
-                        {pool.mintA.symbol} / {pool.mintB.symbol}
-                      </div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <span className="bg-purple-100 dark:bg-purple-900 px-2 py-1 rounded text-sm">
-                    {pool.feeRate}
-                  </span>
-                </TableCell>
-                <TableCell>
-                  <div className="flex items-center gap-2">
-                    <span className="text-emerald-500">Up to {pool.apr}%</span>
-                    <TrendingUp className="h-4 w-4 text-emerald-500" />
-                    <span className="text-gray-500 line-through">
-                      {pool.prevApr}%
-                    </span>
-                  </div>
-                </TableCell>
-                <TableCell>$ {pool.mintAmountA + pool.mintAmountB}</TableCell>
-                <TableCell>$ {pool.day.volume}</TableCell>
-                <TableCell>
-                  <span className="bg-purple-100 dark:bg-purple-900 px-2 py-1 rounded text-sm">
-                    <button className="text-emerald-500" onClick={() => router.push(`/pools/${pool.id}`)}>Deposit</button>
-                  </span>
-                </TableCell>
-              </TableRow>
-            ))}
+            {pools
+              .filter(
+                (val) =>
+                  val.tokenASymbool
+                    .toLocaleLowerCase()
+                    .includes(searcVal?.toLocaleLowerCase()) ||
+                  val.tokenBSymbool
+                    .toLocaleLowerCase()
+                    .includes(searcVal?.toLocaleLowerCase())
+              )
+              .map((pool, i) => (
+                <PoolTable
+                  key={i}
+                  tokenALogo={pool.tokenALogo}
+                  tokenBLogo={pool.tokenBLogo}
+                  tokenASymbool={pool.tokenASymbool}
+                  tokenBSymbool={pool.tokenBSymbool}
+                  apr={pool.apr}
+                  tvl={pool.tvl}
+                  volume={pool.volume}
+                  feeRate={pool.feeRate}
+                  id={pool.id}
+                />
+              ))}
           </TableBody>
         </Table>
       </div>

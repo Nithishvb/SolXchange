@@ -3,7 +3,7 @@ import LiquidityPool from "./LiquidityPools";
 
 export default function Pool() {
   return (
-    <div className="my-5">
+    <div className="py-5 bg-gradient-to-b from-purple-50">
       <LiquidityPool />
     </div>
   );
