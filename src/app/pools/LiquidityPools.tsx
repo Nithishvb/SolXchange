@@ -51,9 +51,14 @@ export default function LiquidityPool() {
     poolsData();
   }, []);
 
+
   return (
     <div className="flex justify-center w-full">
-      <div className="w-[80%] p-4 space-y-4 rounded-lg to-white dark:from-purple-950 dark:to-gray-950">
+      <div className="w-[90%] p-4 space-y-4 rounded-lg to-white dark:from-purple-950 dark:to-gray-950">
+      <div className="mb-6">
+        <h2 className="text-4xl mb-2 font-semibold">Liquidity Pools</h2>
+        <span>Provide liquidity, earn yield.</span>
+      </div>
         <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
           <div className="flex gap-2">
             <div className="relative">
@@ -66,6 +71,11 @@ export default function LiquidityPool() {
                 className="pl-10 pr-4 py-2 rounded-lg border bg-white dark:bg-gray-900 w-[400px]"
               />
             </div>
+          </div>
+          <div>
+          <button className="px-4 py-2 text-black backdrop-blur-sm border border-black rounded-full hover:shadow-[0px_0px_4px_4px_rgba(0,0,0,0.1)] bg-white/[0.2] text-sm transition duration-200">
+            Create pool
+          </button>
           </div>
         </div>
         <Table>

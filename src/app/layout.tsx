@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { DM_Sans } from "next/font/google";
 import "./globals.css";
+import Header from "@/components/Header";
 
 const inter = DM_Sans({ subsets: ['latin'] , weight: '400' });
 
@@ -19,6 +20,7 @@ export default function RootLayout({
       <body
         className={`${inter.className} antialiased`}
       >
+        <Header />
         {children}
       </body>
     </html>

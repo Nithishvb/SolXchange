@@ -7,15 +7,18 @@ import {
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
+import { useRouter } from "next/navigation";
 
 export default function AddLiquidity() {
+
+  const router = useRouter();
 
   return (
     <div className="max-w-xl mx-auto bg-background shadow-custom rounded-xl">
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-4">
-          <Button variant="ghost" size="icon">
-            <ArrowLeft className="h-5 w-5" />
+          <Button variant="ghost" size="icon" onClick={() => router.push("/pools")} >
+            <ArrowLeft className="h-5 w-5"/>
           </Button>
         </div>
         <h1 className="text-xl font-semibold">Add liquidity</h1>
