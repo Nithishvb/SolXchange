@@ -10,6 +10,7 @@ import {
 } from "@/components/ui/table";
 import { ChevronDown, Search } from "lucide-react";
 import { PoolTable } from "./PoolTable";
+import { useRouter } from "next/navigation";
 interface Pools {
   id: string;
   tokenALogo: string;
@@ -25,6 +26,8 @@ interface Pools {
 export default function LiquidityPool() {
   const [pools, setPools] = useState<Pools[]>([]);
   const [searcVal, setSearchVal] = useState<string>("");
+
+  const router = useRouter();
 
   const poolsData = async () => {
     const data = await fetch(
@@ -73,7 +76,7 @@ export default function LiquidityPool() {
             </div>
           </div>
           <div>
-          <button className="px-4 py-2 text-black backdrop-blur-sm border border-black rounded-full hover:shadow-[0px_0px_4px_4px_rgba(0,0,0,0.1)] bg-white/[0.2] text-sm transition duration-200">
+          <button onClick={() => router.push("/pools/create")} className="px-4 py-2 text-black backdrop-blur-sm border border-black rounded-full hover:shadow-[0px_0px_4px_4px_rgba(0,0,0,0.1)] bg-white/[0.2] text-sm transition duration-200">
             Create pool
           </button>
           </div>

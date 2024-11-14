@@ -137,7 +137,7 @@ export default function AddLiquidity() {
           </div>
         </div>
 
-        <Button className="w-full bg-rebeccapurple hover:bg-rebeccapurple-600 text-white h-12 rounded-lg text-lg font-semibold	">
+        <Button className="w-full bg-rebeccapurple hover:bg-rebeccapurple-600 text-white h-12 rounded-lg text-lg font-semibold">
           Connect wallet
         </Button>
       </div>
