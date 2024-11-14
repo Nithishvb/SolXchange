@@ -1,18 +1,17 @@
 "use client";
 
-import { useState } from "react";
-import { Search, X } from "lucide-react";
+import { useEffect, useMemo, useState } from "react";
+import { Search } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
 } from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
-
+import Image from "next/image";
 interface Token {
   symbol: string;
   name: string;
@@ -20,85 +19,62 @@ interface Token {
   balance: string;
   address: string;
 }
+interface TokenSelectorProps {
+  isOpen: boolean;
+  onClose: () => void;
+  setIsOpen: (val: boolean) => void;
+}
 
-const popularTokens: Token[] = [
-  {
-    symbol: "USDC",
-    name: "USD Coin",
-    icon: "○",
-    balance: "0",
-    address: "Ux3Duj...QrkX6R",
-  },
-  {
-    symbol: "SOL",
-    name: "Solana",
-    icon: "◎",
-    balance: "0",
-    address: "Es9vMF...enwNYB",
-  },
-  {
-    symbol: "RAY",
-    name: "Raydium",
-    icon: "◈",
-    balance: "0",
-    address: "4k3Duj...QrkX6R",
-  },
-  {
-    symbol: "USDT",
-    name: "Tether",
-    icon: "₮",
-    balance: "0",
-    address: "Es9vMF...enwNYB",
-  },
-];
-
-const allTokens: Token[] = [
-  ...popularTokens,
-  {
-    symbol: "ETH",
-    name: "Ethereum",
-    icon: "⟠",
-    balance: "0",
-    address: "0x742d3...3894",
-  },
-  {
-    symbol: "BTC",
-    name: "Bitcoin",
-    icon: "₿",
-    balance: "0",
-    address: "bc1qxy...j5tc",
-  },
-];
-
-export default function TokenSelector() {
+export default function TokenSelector({
+  isOpen,
+  onClose,
+  setIsOpen,
+}: TokenSelectorProps) {
   const [search, setSearch] = useState("");
-  const [open, setOpen] = useState(false);
+  const [tokens, setTokens] = useState<Token[]>([]);
 
-  const filteredTokens = allTokens.filter(
-    (token) =>
-      token.symbol.toLowerCase().includes(search.toLowerCase()) ||
-      token.name.toLowerCase().includes(search.toLowerCase()) ||
-      token.address.toLowerCase().includes(search.toLowerCase())
-  );
+  useEffect(() => {
+    fetchTokenList();
+  }, []);
+
+  const filteredTokens = useMemo(() => {
+    return tokens.filter(
+      (token) =>
+        token.symbol.toLowerCase().includes(search.toLowerCase()) ||
+        token.name.toLowerCase().includes(search.toLowerCase()) ||
+        token.address.toLowerCase().includes(search.toLowerCase())
+    );
+  }, [tokens, search]);
+
+  const fetchTokenList = async () => {
+    try {
+      const response = await fetch("");
+      const res = await response.json();
+      if (res && res.data) {
+        const tokens: Token[] = res.data.mintList.map((val: any) => {
+          return {
+            symbol: val.symbol,
+            name: val.name,
+            icon: val.logoURI,
+            balance: "0",
+            address: val.programId,
+          };
+        });
+        setTokens(tokens);
+      }
+    } catch (err) {
+      console.log(err);
+      setTokens([]);
+    }
+  };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="outline">Select a token</Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px] bg-[#1a1b23] text-white border-slate-800">
+    <Dialog open={isOpen} onOpenChange={setIsOpen}>
+      <DialogContent className="sm:max-w-[460px] bg-[#1a1b23] text-white border-slate-800 h-[530px]">
         <DialogHeader className="flex flex-row items-center justify-between">
           <DialogTitle className="text-xl font-normal">
             Select a token
           </DialogTitle>
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-6 w-6 text-slate-400 hover:text-white"
-            onClick={() => setOpen(false)}
-          >
-            <X className="h-4 w-4" />
-          </Button>
         </DialogHeader>
 
         <div className="relative">
@@ -115,14 +91,17 @@ export default function TokenSelector() {
           <div className="space-y-2">
             <label className="text-sm text-slate-400">Popular tokens</label>
             <div className="flex flex-wrap gap-2">
-              {popularTokens.map((token) => (
+              {tokens.slice(0, 4).map((token) => (
+                token && token.name && 
                 <Button
                   key={token.symbol}
                   variant="outline"
                   className="bg-[#0d0e12] hover:bg-slate-800 border-slate-700 text-white"
-                  onClick={() => setOpen(false)}
+                  onClick={onClose}
                 >
-                  <span className="mr-2">{token.icon}</span>
+                  {token.icon && (
+                    <Image src={token.icon} alt="" height={20} width={20} />
+                  )}
                   {token.symbol}
                 </Button>
               ))}
@@ -132,34 +111,38 @@ export default function TokenSelector() {
           <div className="space-y-2">
             <div className="flex justify-between text-sm text-slate-400">
               <span>Token</span>
-              <span>Balance/Address</span>
             </div>
             <ScrollArea className="h-[200px] pr-4">
               {filteredTokens.length > 0 ? (
-                filteredTokens.map((token) => (
-                  <Button
-                    key={token.symbol}
-                    variant="ghost"
-                    className="w-full justify-between hover:bg-slate-800"
-                    onClick={() => setOpen(false)}
-                  >
-                    <span className="flex items-center gap-2">
-                      <span className="text-lg">{token.icon}</span>
-                      <div className="flex flex-col items-start">
-                        <span className="text-white">{token.symbol}</span>
-                        <span className="text-sm text-slate-400">
-                          {token.name}
+                filteredTokens.map(
+                  (token, index) =>
+                    token &&
+                    token.name && (
+                      <Button
+                        key={index}
+                        variant="ghost"
+                        className="w-full justify-between hover:bg-slate-800 p-2 py-7"
+                        onClick={onClose}
+                      >
+                        <span className="flex items-center gap-2">
+                          {token.icon && (
+                            <Image
+                              src={token.icon}
+                              alt=""
+                              height={20}
+                              width={20}
+                            />
+                          )}
+                          <div className="flex flex-col items-start">
+                            <span className="text-white">{token.symbol}</span>
+                            <span className="text-xs text-slate-400">
+                              {token.name}
+                            </span>
+                          </div>
                         </span>
-                      </div>
-                    </span>
-                    <span className="flex flex-col items-end">
-                      <span className="text-white">{token.balance}</span>
-                      <span className="text-sm text-slate-400">
-                        {token.address}
-                      </span>
-                    </span>
-                  </Button>
-                ))
+                      </Button>
+                    )
+                )
               ) : (
                 <div className="p-4 text-center text-sm text-slate-400 bg-[#0d0e12] rounded-lg">
                   Can&apos;t find the token you&apos;re looking for? Try
@@ -169,13 +152,6 @@ export default function TokenSelector() {
             </ScrollArea>
           </div>
         </div>
-
-        <Button
-          variant="outline"
-          className="w-full bg-[#0d0e12] hover:bg-slate-800 border-slate-700 text-white"
-        >
-          View Token List
-        </Button>
       </DialogContent>
     </Dialog>
   );

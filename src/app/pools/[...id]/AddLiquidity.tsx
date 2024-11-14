@@ -14,7 +14,7 @@ export default function AddLiquidity() {
   const router = useRouter();
 
   return (
-    <div className="max-w-xl mx-auto bg-background shadow-custom rounded-xl">
+    <div className="max-w-xl mx-auto bg-background shadow-[0_3px_10px_rgb(0,0,0,0.2)] rounded-xl">
       <div className="flex items-center justify-between p-4 border-b">
         <div className="flex items-center gap-4">
           <Button variant="ghost" size="icon" onClick={() => router.push("/pools")} >

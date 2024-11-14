@@ -9,6 +9,7 @@ import {
   CardTitle,
 } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { useModal } from "@/context/ModalContext";
 import { ArrowDownUp, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
@@ -18,11 +19,13 @@ export default function Swap() {
     const [sellFocus, setSellFocus] = useState<boolean>(true);
     const [buyFocus, setBuyFocus] = useState<boolean>(false);
 
+    const { openModal } = useModal();
+
   return (
     <div className="w-full flex items-center justify-center p-4 relative overflow-hidden mt-10">
-      <Card className="w-full max-w-md mx-auto backdrop-blur-xl bg-background/60 border-muted/40">
+      <Card className="w-full max-w-md mx-auto backdrop-blur-xl bg-background/60 border-muted/40 shadow-[0_3px_10px_rgb(0,0,0,0.2)]">
         <CardHeader>
-          <CardTitle className="text-4xl font-bold text-center">
+          <CardTitle className="text-2xl font-bold text-center">
             Swap
           </CardTitle>
         </CardHeader>
@@ -32,7 +35,7 @@ export default function Swap() {
               Sell
             </label>
             <div className="space-y-3">
-              <div className={`bg-muted/50 p-4 space-y-2 border border-1 rounded-2xl ${sellFocus ? 'bg-white' : ''}`}>
+              <div className={`p-4 space-y-2 border border-1 rounded-2xl ${sellFocus ? 'bg-white' : 'bg-gray-100'}`}>
                 <Input
                   type="number"
                   placeholder="0"
@@ -42,7 +45,7 @@ export default function Swap() {
                 />
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">-</span>
-                  <div className="flex items-center gap-2 bg-white cursor-pointer border border-gray-300 p-1 rounded-full">
+                  <div onClick={openModal} className="flex items-center gap-2 bg-white cursor-pointer border border-gray-300 p-1 rounded-full">
                     <div className="w-6 h-6 rounded-full bg-[#627EEA] flex items-center justify-center">
                       <Image
                         src="https://img-v1.raydium.io/icon/7BgBvyjrZX1YKz4oh9mjb8ZScatkkwb8DzFx7LoiVkM3.png"
@@ -68,10 +71,10 @@ export default function Swap() {
                 </Button>
               </div>
 
-              <label className="text-sm font-medium text-muted-foreground">
+            <label className="text-sm font-medium text-muted-foreground">
                 Buy
               </label>
-              <div className={`bg-muted/50 p-4 space-y-2 border border-1 rounded-2xl ${!sellFocus ? 'bg-white' : ''}`}>
+              <div className={`p-4 space-y-2 border border-1 rounded-2xl ${!sellFocus ? 'bg-white' : 'bg-gray-100'}`}>
                 <Input
                   type="number"
                   placeholder="0"
@@ -81,7 +84,7 @@ export default function Swap() {
                 />
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">-</span>
-                  <div className="flex items-center gap-2 bg-white cursor-pointer border border-gray-300 p-1 rounded-full">
+                  <div onClick={openModal} className="flex items-center gap-2 bg-white cursor-pointer border border-gray-300 p-1 rounded-full">
                     <div className="w-6 h-6 rounded-full bg-[#D65454] flex items-center justify-center">
                       <Image
                         src="https://img-v1.raydium.io/icon/7BgBvyjrZX1YKz4oh9mjb8ZScatkkwb8DzFx7LoiVkM3.png"
