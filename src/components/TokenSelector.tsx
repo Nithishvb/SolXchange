@@ -50,7 +50,7 @@ export default function TokenSelector({
 
   const fetchTokenList = async () => {
     try {
-      const response = await fetch("https://api-v3.raydium.io/mint/list");
+      const response = await fetch("");
       const res = await response.json();
       if (res && res.data) {
         const tokens: Token[] = res.data.mintList.map((val: any) => {
