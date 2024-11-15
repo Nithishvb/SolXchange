@@ -1,12 +1,15 @@
 "use client";
 
-import TokenSelector from "@/components/TokenSelector";
+import TokenSelector, { Token } from "@/components/TokenSelector";
 import React, { createContext, useContext, useState, ReactNode } from "react";
 
 interface ModalContextType {
   openModal: () => void;
   closeModal: () => void;
-}
+  onSelectToken: () => void;
+  token: Token | undefined;
+};
+
 
 const ModalContext = createContext<ModalContextType | undefined>(undefined);
 
@@ -24,6 +27,7 @@ interface ModalProviderProps {
 
 export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [token, setToken] = useState<Token>();
 
   const openModal = () => {
     setIsOpen(true);
@@ -33,13 +37,18 @@ export const ModalProvider: React.FC<ModalProviderProps> = ({ children }) => {
     setIsOpen(false);
   };
 
+  const onSelectToken = (val?: Token) => {
+    setToken(val);
+  }
+
   return (
-    <ModalContext.Provider value={{ openModal, closeModal }}>
+    <ModalContext.Provider value={{ openModal, closeModal , onSelectToken, token}}>
       {children}
       <TokenSelector
         isOpen={isOpen}
         setIsOpen={setIsOpen}
         onClose={closeModal}
+        onSelectedToken={onSelectToken}
       />
     </ModalContext.Provider>
   );

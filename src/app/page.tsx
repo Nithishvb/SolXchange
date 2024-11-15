@@ -1,7 +1,8 @@
+"use client";
+
+import { useRouter } from "next/navigation";
+
 export default function Home() {
-  return (
-    <div>
-     <h1>Hello world</h1>
-    </div>
-  );
+  const router = useRouter();
+  return router.push('/swap');
 }

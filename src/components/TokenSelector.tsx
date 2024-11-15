@@ -12,7 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Image from "next/image";
-interface Token {
+export interface Token {
   symbol: string;
   name: string;
   icon: string;
@@ -23,12 +23,14 @@ interface TokenSelectorProps {
   isOpen: boolean;
   onClose: () => void;
   setIsOpen: (val: boolean) => void;
+  onSelectedToken: (val: Token) => void;
 }
 
 export default function TokenSelector({
   isOpen,
   onClose,
   setIsOpen,
+  onSelectedToken
 }: TokenSelectorProps) {
   const [search, setSearch] = useState("");
   const [tokens, setTokens] = useState<Token[]>([]);
@@ -48,7 +50,7 @@ export default function TokenSelector({
 
   const fetchTokenList = async () => {
     try {
-      const response = await fetch("");
+      const response = await fetch("https://api-v3.raydium.io/mint/list");
       const res = await response.json();
       if (res && res.data) {
         const tokens: Token[] = res.data.mintList.map((val: any) => {
@@ -96,8 +98,11 @@ export default function TokenSelector({
                 <Button
                   key={token.symbol}
                   variant="outline"
-                  className="bg-[#0d0e12] hover:bg-slate-800 border-slate-700 text-white"
-                  onClick={onClose}
+                  className="bg-[#0d0e12] hover:bg-slate-800 hover:text-white border-slate-700 text-white"
+                  onClick={() => {
+                    onSelectedToken(token);
+                    onClose();
+                  }}
                 >
                   {token.icon && (
                     <Image src={token.icon} alt="" height={20} width={20} />
@@ -122,7 +127,10 @@ export default function TokenSelector({
                         key={index}
                         variant="ghost"
                         className="w-full justify-between hover:bg-slate-800 p-2 py-7"
-                        onClick={onClose}
+                        onClick={() => {
+                          onSelectedToken(token);
+                          onClose();
+                        }}
                       >
                         <span className="flex items-center gap-2">
                           {token.icon && (

@@ -1,5 +1,6 @@
 "use client";
 
+import { Token } from "@/components/TokenSelector";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -18,6 +19,8 @@ export default function Swap() {
 
     const [sellFocus, setSellFocus] = useState<boolean>(true);
     const [buyFocus, setBuyFocus] = useState<boolean>(false);
+    const [baseToken, setBaseToken] = useState<Token>();
+    const [quoteToken, setQuoteToken] = useState<Token>();
 
     const { openModal } = useModal();
 
@@ -103,7 +106,9 @@ export default function Swap() {
           </div>
         </CardContent>
         <CardFooter className="flex flex-col gap-4">
-          <Button className="w-full bg-rebeccapurple hover:bg-rebeccapurple-600 text-white h-12 rounded-lg text-lg font-semibold	">
+          <Button onClick={() => {
+            console.log(baseToken, quoteToken);
+          }} className="w-full bg-rebeccapurple hover:bg-rebeccapurple-600 text-white h-12 rounded-lg text-lg font-semibold	">
             Connect wallet
           </Button>
         </CardFooter>
