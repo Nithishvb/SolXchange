@@ -13,7 +13,6 @@ import { Input } from "@/components/ui/input";
 import SpinningLoader from "@/components/ui/SpinningLoader";
 import { useModal } from "@/context/ModalContext";
 import { useTokenValue } from "@/lib/hooks/use-token-value";
-import { formatNumber } from "@/lib/utils";
 import { ArrowDownUp, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -21,7 +20,13 @@ import { useEffect, useState } from "react";
 export default function Swap() {
   const [sellFocus, setSellFocus] = useState<boolean>(true);
   const [buyFocus, setBuyFocus] = useState<boolean>(false);
-  const [baseToken, setBaseToken] = useState<Token>();
+  const [baseToken, setBaseToken] = useState<Token>({
+    name: "solana",
+    symbol: "sol",
+    image:
+      "https://coin-images.coingecko.com/coins/images/4128/large/solana.png?1718769756",
+    balance: "0",
+  });
   const [quoteToken, setQuoteToken] = useState<Token>();
   const [sellPrice, setSellPrice] = useState<number>();
   const [buyPrice, setBuyPrice] = useState<number>();
@@ -32,7 +37,7 @@ export default function Swap() {
     baseTokenValueUSD,
     quoteTokenValue,
     quouteTokenValueUSD,
-    baseTokenValue
+    baseTokenValue,
   } = useTokenValue();
 
   const { openModal } = useModal();
@@ -41,7 +46,12 @@ export default function Swap() {
     openModal((selectedToken: Token) => {
       setBaseToken(selectedToken);
       if (sellPrice && (selectedToken?.name || selectedToken?.name)) {
-        fetchTokenValues(sellPrice, buyPrice ? buyPrice : 0, selectedToken?.name, quoteToken?.name);
+        fetchTokenValues(
+          sellPrice,
+          buyPrice ? buyPrice : 0,
+          selectedToken?.name,
+          quoteToken?.name
+        );
       }
     });
   };
@@ -50,14 +60,24 @@ export default function Swap() {
     openModal((selectedToken: Token) => {
       setQuoteToken(selectedToken);
       if (sellPrice && (baseToken?.name || selectedToken?.name)) {
-        fetchTokenValues(sellPrice, buyPrice ? buyPrice : 0,  baseToken?.name, selectedToken?.name);
+        fetchTokenValues(
+          sellPrice,
+          buyPrice ? buyPrice : 0,
+          baseToken?.name,
+          selectedToken?.name
+        );
       }
     });
   };
 
   useEffect(() => {
     if (sellPrice && (baseToken?.name || quoteToken?.name)) {
-      fetchTokenValues(sellPrice, buyPrice ? buyPrice : 0, baseToken?.name, quoteToken?.name);
+      fetchTokenValues(
+        sellPrice,
+        buyPrice ? buyPrice : 0,
+        baseToken?.name,
+        quoteToken?.name
+      );
     }
   }, [sellPrice, buyPrice]);
 
@@ -65,7 +85,7 @@ export default function Swap() {
     if (quoteTokenValue) {
       setBuyPrice(quoteTokenValue);
     }
-    if(baseTokenValue){
+    if (baseTokenValue) {
       setBuyPrice(baseTokenValue);
     }
   }, [quoteTokenValue, baseTokenValue]);
@@ -164,19 +184,25 @@ export default function Swap() {
                   </span>
                   <div
                     onClick={handleQuoteTokenSelect}
-                    className="flex items-center gap-2 bg-white cursor-pointer border border-gray-300 p-1 rounded-full"
+                    className={`flex items-center gap-2 ${quoteToken?.image ? 'bg-white' : 'bg-[#627EEA]'} cursor-pointer border border-gray-300 p-1 rounded-full`}
                   >
-                    <div className="w-6 h-6 rounded-full bg-[#627EEA] flex items-center justify-center">
-                      <Image
-                        src={quoteToken?.image}
-                        alt="SUSHI"
-                        width={16}
-                        height={16}
-                        className="rounded-full"
-                      />
-                    </div>
+                    {quoteToken?.image ? (
+                      <div className="w-6 h-6 rounded-full bg-[#627EEA] flex items-center justify-center">
+                        <Image
+                          src={quoteToken?.image}
+                          alt="SUSHI"
+                          width={16}
+                          height={16}
+                          className="rounded-full"
+                        />
+                      </div>
+                    ) : (
+                      <div className="pl-2 rounded-full flex items-center text-sm justify-center text-white">
+                        Select token
+                      </div>
+                    )}
                     <span className="font-medium">{quoteToken?.symbol}</span>
-                    <ChevronDown className="text-gray-400" />
+                    <ChevronDown className={`${quoteToken?.name  ? 'text-gray-400' : 'text-white'}`} />
                   </div>
                 </div>
               </div>
