@@ -15,20 +15,17 @@ import Image from "next/image";
 export interface Token {
   symbol: string;
   name: string;
-  icon: string;
+  image: string;
   balance: string;
-  address: string;
 }
 interface TokenSelectorProps {
   isOpen: boolean;
-  onClose: () => void;
   setIsOpen: (val: boolean) => void;
   onSelectedToken: (val: Token) => void;
 }
 
 export default function TokenSelector({
   isOpen,
-  onClose,
   setIsOpen,
   onSelectedToken
 }: TokenSelectorProps) {
@@ -43,8 +40,7 @@ export default function TokenSelector({
     return tokens.filter(
       (token) =>
         token.symbol.toLowerCase().includes(search.toLowerCase()) ||
-        token.name.toLowerCase().includes(search.toLowerCase()) ||
-        token.address.toLowerCase().includes(search.toLowerCase())
+        token.name.toLowerCase().includes(search.toLowerCase())
     );
   }, [tokens, search]);
 
@@ -52,14 +48,13 @@ export default function TokenSelector({
     try {
       const response = await fetch("");
       const res = await response.json();
-      if (res && res.data) {
-        const tokens: Token[] = res.data.mintList.map((val: any) => {
+      if (res) {
+        const tokens: Token[] = res.map((val: Token) => {
           return {
-            symbol: val.symbol,
+            symbol: val.symbol.toLocaleUpperCase(),
             name: val.name,
-            icon: val.logoURI,
+            image: val.image,
             balance: "0",
-            address: val.programId,
           };
         });
         setTokens(tokens);
@@ -99,13 +94,10 @@ export default function TokenSelector({
                   key={token.symbol}
                   variant="outline"
                   className="bg-[#0d0e12] hover:bg-slate-800 hover:text-white border-slate-700 text-white"
-                  onClick={() => {
-                    onSelectedToken(token);
-                    onClose();
-                  }}
+                  onClick={() => onSelectedToken(token)}
                 >
-                  {token.icon && (
-                    <Image src={token.icon} alt="" height={20} width={20} />
+                  {token.image && (
+                    <Image src={token.image} alt="" height={20} width={20} />
                   )}
                   {token.symbol}
                 </Button>
@@ -127,15 +119,12 @@ export default function TokenSelector({
                         key={index}
                         variant="ghost"
                         className="w-full justify-between hover:bg-slate-800 p-2 py-7"
-                        onClick={() => {
-                          onSelectedToken(token);
-                          onClose();
-                        }}
+                        onClick={() => onSelectedToken(token)}
                       >
                         <span className="flex items-center gap-2">
-                          {token.icon && (
+                          {token.image && (
                             <Image
-                              src={token.icon}
+                              src={token.image}
                               alt=""
                               height={20}
                               width={20}
