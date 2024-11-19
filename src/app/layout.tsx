@@ -4,7 +4,7 @@ import "./globals.css";
 import Header from "@/components/Header";
 import { ModalProvider } from "@/context/ModalContext";
 
-const inter = DM_Sans({ subsets: ['latin'] , weight: '400' });
+const inter = DM_Sans({ subsets: ["latin"], weight: "400" });
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -18,9 +18,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body
-        className={`${inter.className} antialiased`}
-      >
+      <body className={`${inter.className} antialiased`}>
         <ModalProvider>
           <Header />
           {children}

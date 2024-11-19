@@ -19,7 +19,6 @@ import { useEffect, useState } from "react";
 
 export default function Swap() {
   const [sellFocus, setSellFocus] = useState<boolean>(true);
-  const [buyFocus, setBuyFocus] = useState<boolean>(false);
   const [baseToken, setBaseToken] = useState<Token>({
     name: "solana",
     symbol: "sol",
@@ -28,11 +27,12 @@ export default function Swap() {
     balance: "0",
   });
   const [quoteToken, setQuoteToken] = useState<Token>();
-  const [sellPrice, setSellPrice] = useState<number>();
-  const [buyPrice, setBuyPrice] = useState<number>();
+  const [sellPrice, setSellPrice] = useState<string>(""); // Change to string
+  const [buyPrice, setBuyPrice] = useState<string>(""); // Change to string
 
   const {
-    fetchTokenValues,
+    fetchBaseTokenValues,
+    fetchQuoteTokenValues,
     loading,
     baseTokenValueUSD,
     quoteTokenValue,
@@ -43,52 +43,69 @@ export default function Swap() {
   const { openModal } = useModal();
 
   const handleBaseTokenSelect = () => {
-    openModal((selectedToken: Token) => {
+    openModal(async (selectedToken: Token) => {
       setBaseToken(selectedToken);
-      if (sellPrice && (selectedToken?.name || selectedToken?.name)) {
-        fetchTokenValues(
-          sellPrice,
-          buyPrice ? buyPrice : 0,
-          selectedToken?.name,
-          quoteToken?.name
+      if (sellPrice && baseToken.name) {
+        await fetchBaseTokenValues(
+          parseFloat(sellPrice),
+          baseToken.name,
+          quoteToken?.name || ""
         );
       }
     });
   };
 
   const handleQuoteTokenSelect = () => {
-    openModal((selectedToken: Token) => {
+    openModal(async (selectedToken: Token) => {
       setQuoteToken(selectedToken);
-      if (sellPrice && (baseToken?.name || selectedToken?.name)) {
-        fetchTokenValues(
-          sellPrice,
-          buyPrice ? buyPrice : 0,
-          baseToken?.name,
-          selectedToken?.name
+      if (buyPrice && quoteToken && quoteToken.name) {
+        await fetchQuoteTokenValues(
+          parseFloat(buyPrice),
+          baseToken.name,
+          quoteToken?.name || ""
         );
       }
     });
   };
 
   useEffect(() => {
-    if (sellPrice && (baseToken?.name || quoteToken?.name)) {
-      fetchTokenValues(
-        sellPrice,
-        buyPrice ? buyPrice : 0,
-        baseToken?.name,
-        quoteToken?.name
-      );
-    }
-  }, [sellPrice, buyPrice]);
-
-  useEffect(() => {
     if (quoteTokenValue) {
-      setBuyPrice(quoteTokenValue);
+      setBuyPrice(quoteTokenValue.toString()); // Convert to string
     }
     if (baseTokenValue) {
-      setBuyPrice(baseTokenValue);
+      setSellPrice(baseTokenValue.toString()); // Convert to string
     }
   }, [quoteTokenValue, baseTokenValue]);
+
+  const handleSellToken = async (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = event.target.value;
+    setSellPrice(value); // Set value directly
+    const sellPriceNumber = parseFloat(value);
+
+    if (!isNaN(sellPriceNumber) && baseToken.name) {
+      await fetchBaseTokenValues(
+        sellPriceNumber,
+        baseToken.name,
+        quoteToken?.name || ""
+      );
+    }
+  };
+
+  const handleBuyToken = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const value = event.target.value;
+    setBuyPrice(value); // Set value directly
+    const buyPriceNumber = parseFloat(value);
+
+    if (!isNaN(buyPriceNumber) && quoteToken && quoteToken.name) {
+      await fetchQuoteTokenValues(
+        buyPriceNumber,
+        baseToken.name,
+        quoteToken?.name || ""
+      );
+    }
+  };
 
   return (
     <div className="w-full flex items-center justify-center p-4 relative overflow-hidden mt-10">
@@ -111,7 +128,7 @@ export default function Swap() {
                   type="number"
                   placeholder="0"
                   value={sellPrice}
-                  onChange={(e) => setSellPrice(parseInt(e.target.value))}
+                  onChange={handleSellToken}
                   className="text-2xl font-semibold border-none h-auto p-0 shadow-none focus-visible:ring-0"
                   onFocus={() => setSellFocus(true)}
                   onBlur={() => setSellFocus(false)}
@@ -167,10 +184,8 @@ export default function Swap() {
                   type="number"
                   placeholder="0"
                   value={buyPrice}
-                  onChange={(e) => setBuyPrice(parseInt(e.target.value))}
+                  onChange={handleBuyToken}
                   className="text-2xl font-semibold bg-transparent shadow-none border-none h-auto p-0 focus-visible:ring-0"
-                  onFocus={() => setBuyFocus(true)}
-                  onBlur={() => setBuyFocus(false)}
                 />
                 <div className="flex items-center justify-between">
                   <span className="text-sm text-muted-foreground">
@@ -184,7 +199,9 @@ export default function Swap() {
                   </span>
                   <div
                     onClick={handleQuoteTokenSelect}
-                    className={`flex items-center gap-2 ${quoteToken?.image ? 'bg-white' : 'bg-[#627EEA]'} cursor-pointer border border-gray-300 p-1 rounded-full`}
+                    className={`flex items-center gap-2 ${
+                      quoteToken?.image ? "bg-white" : "bg-[#627EEA]"
+                    } cursor-pointer border border-gray-300 p-1 rounded-full`}
                   >
                     {quoteToken?.image ? (
                       <div className="w-6 h-6 rounded-full bg-[#627EEA] flex items-center justify-center">
@@ -202,7 +219,11 @@ export default function Swap() {
                       </div>
                     )}
                     <span className="font-medium">{quoteToken?.symbol}</span>
-                    <ChevronDown className={`${quoteToken?.name  ? 'text-gray-400' : 'text-white'}`} />
+                    <ChevronDown
+                      className={`${
+                        quoteToken?.name ? "text-gray-400" : "text-white"
+                      }`}
+                    />
                   </div>
                 </div>
               </div>
