@@ -15,6 +15,7 @@ import { ArrowDownUp, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 const feeTiers = [
   { value: "0.01", status: "Not created", percentage: "0.01%" },
@@ -31,6 +32,7 @@ export default function Swap() {
   const [feeTier, setFeeTier] = useState<boolean>(false);
 
   const { openModal } = useModal();
+  const { publicKey } = useWallet();
 
   return (
     <div className="w-full flex items-center justify-center p-4 relative overflow-hidden mt-7">
@@ -181,7 +183,7 @@ export default function Swap() {
             }}
             className="w-full bg-rebeccapurple hover:bg-rebeccapurple-600 text-white h-12 rounded-lg text-lg font-semibold	"
           >
-            Connect wallet
+            {publicKey ? "Continue" : "Connect wallet"}
           </Button>
         </CardFooter>
       </Card>

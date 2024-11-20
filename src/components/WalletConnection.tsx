@@ -1,4 +1,4 @@
-// components/WalletConnection.js
+"use client";
 
 import React, { ReactNode, useMemo } from "react";
 import {
@@ -10,7 +10,9 @@ import {
   PhantomWalletAdapter,
   SolflareWalletAdapter  // Add other wallet adapters here if needed
 } from "@solana/wallet-adapter-wallets";
-import { WalletModalProvider , WalletMultiButton } from "@solana/wallet-adapter-react-ui";
+import { WalletModalProvider } from "@solana/wallet-adapter-react-ui";
+
+import "@solana/wallet-adapter-react-ui/styles.css";
 
 const WalletConnection = ({ children } : { children: ReactNode }) => {
   // Define the network (mainnet-beta, testnet, or devnet)
@@ -32,7 +34,6 @@ const WalletConnection = ({ children } : { children: ReactNode }) => {
       <WalletProvider wallets={wallets} autoConnect>
         <WalletModalProvider>
           {children}
-          <WalletMultiButton />
         </WalletModalProvider>
       </WalletProvider>
     </ConnectionProvider>

@@ -3,6 +3,7 @@ import { DM_Sans } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
 import { ModalProvider } from "@/context/ModalContext";
+import WalletConnection from "@/components/WalletConnection";
 
 const inter = DM_Sans({ subsets: ["latin"], weight: "400" });
 
@@ -19,10 +20,12 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${inter.className} antialiased`}>
-        <ModalProvider>
-          <Header />
-          {children}
-        </ModalProvider>
+        <WalletConnection>
+          <ModalProvider>
+            <Header />
+            {children}
+          </ModalProvider>
+        </WalletConnection>
       </body>
     </html>
   );

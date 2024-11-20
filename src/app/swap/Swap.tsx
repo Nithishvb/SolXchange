@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import SpinningLoader from "@/components/ui/SpinningLoader";
 import { useModal } from "@/context/ModalContext";
 import { useTokenValue } from "@/lib/hooks/use-token-value";
+import { useWallet } from "@solana/wallet-adapter-react";
 import { ArrowDownUp, ChevronDown } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -27,8 +28,10 @@ export default function Swap() {
     balance: "0",
   });
   const [quoteToken, setQuoteToken] = useState<Token>();
-  const [sellPrice, setSellPrice] = useState<string>(""); // Change to string
-  const [buyPrice, setBuyPrice] = useState<string>(""); // Change to string
+  const [sellPrice, setSellPrice] = useState<string>("");
+  const [buyPrice, setBuyPrice] = useState<string>("");
+
+  const { publicKey } = useWallet();
 
   const {
     fetchBaseTokenValues,
@@ -237,7 +240,7 @@ export default function Swap() {
             }}
             className="w-full bg-rebeccapurple hover:bg-rebeccapurple-600 text-white h-12 rounded-lg text-lg font-semibold	"
           >
-            Connect wallet
+            {publicKey ? "Swap" : "Connect wallet"}
           </Button>
         </CardFooter>
       </Card>

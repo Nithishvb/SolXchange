@@ -8,10 +8,12 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
+import { useWallet } from "@solana/wallet-adapter-react";
 
 export default function AddLiquidity() {
 
   const router = useRouter();
+  const { publicKey } = useWallet();
 
   return (
     <div className="max-w-xl mx-auto bg-background shadow-[0_3px_10px_rgb(0,0,0,0.2)] rounded-xl">
@@ -138,7 +140,7 @@ export default function AddLiquidity() {
         </div>
 
         <Button className="w-full bg-rebeccapurple hover:bg-rebeccapurple-600 text-white h-12 rounded-lg text-lg font-semibold">
-          Connect wallet
+        {publicKey ? "Add liquidity" : "Connect wallet"}
         </Button>
       </div>
     </div>

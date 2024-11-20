@@ -1,20 +1,16 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback } from "react";
 import Link from "next/link";
-import { Button } from "@/components/ui/button";
 import { usePathname } from "next/navigation";
+import { WalletMultiButton } from "@solana/wallet-adapter-react-ui";
 
 export default function Header() {
-  const [isPending, setIsPending] = useState(false);
-  const pathname = usePathname()
-
+  const pathname = usePathname();
 
   const isActive = useCallback(
     (path: string) => {
-      return pathname === path
-        ? "text-purple-600"
-        : "text-foreground/60";
+      return pathname === path ? "text-purple-600" : "text-foreground/60";
     },
     [pathname]
   );
@@ -52,13 +48,26 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center justify-end space-x-4">
-          <Button
-            onClick={() => setIsPending(true)}
+          <WalletMultiButton
+            className="bg-gradient-to-r from-cyan-400 to-purple-600 hover:from-cyan-500 hover:to-purple-700 text-white font-medium"
+            style={{
+              backgroundImage: "linear-gradient(to right, #06b6d4, #a855f7)",
+              color: "#ffffff",
+              fontWeight: 500,
+              transition: "background-image 0.3s ease",
+              borderRadius: "10px",
+            }}
+          />
+          {/* <Button
+            onClick={async () => {
+              setIsPending(true);
+              await connect();
+            }}
             disabled={isPending}
             className="bg-gradient-to-r from-cyan-400 to-purple-600 hover:from-cyan-500 hover:to-purple-700 text-white font-medium"
           >
             {isPending ? "Connecting..." : "Connect Wallet"}
-          </Button>
+          </Button> */}
         </div>
       </div>
     </header>
